@@ -1,11 +1,13 @@
 // import "./App.css";
 
-import Header from "../shared/ui/header";
+import Footer from "../shared/ui/Footer";
+import Header from "../shared/ui/Header";
 
 function App() {
   return (
     <>
       <Header />
+      <Footer />
     </>
   );
 }
