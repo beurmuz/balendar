@@ -1,9 +1,11 @@
 /* Tailwind core */
 @import "tailwindcss";
-@import "./reset.css"; /* 커스텀 테마 (v4) */
+
+/* 커스텀 테마 (v4) */
 @theme {
   /* 색상 이름은 자유롭게, 숫자 단계를 붙이면 다양한 셰이드를 만들 수 있어요 */
   --color-brand: #f27316; /* 사용: text-brand, bg-brand */
+  --text-tiny: 0.75rem;
 }
 
 /* 전역 폰트 */
@@ -12,4 +14,47 @@ html {
   font-family: "Pretendard Variable", -apple-system, BlinkMacSystemFont,
     system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo",
     "Noto Sans KR", "Noto Sans", sans-serif;
+}
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  /* margin: 0;
+  padding: 0; */
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeSpeed;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+button {
+  cursor: pointer;
 }
