@@ -1,0 +1,13 @@
+/* Tailwind core */
+@import "tailwindcss";
+
+/* 커스텀 테마 (v4) */
+@theme {
+  /* 색상 이름은 자유롭게, 숫자 단계를 붙이면 다양한 셰이드를 만들 수 있어요 */
+  --color-brand: #f27316; /* 사용: text-brand, bg-brand */
+}
+
+/* 전역 폰트 */
+html {
+  font-family: "Noto Sans KR", "Noto Sans", sans-serif;
+}
