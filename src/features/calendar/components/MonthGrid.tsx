@@ -1,7 +1,9 @@
-import { getMonthRange } from "../../../shared/lib/date";
+import { getMonthGrid } from "../../../shared/lib/date";
 
 export default function MonthGrid() {
-  const { start, end } = getMonthRange(new Date());
-  console.log(start, end);
+  const { start, end, weeks } = getMonthGrid(new Date());
+  console.log(`start: ${start}`);
+  console.log(`end: ${end}`);
+  console.log(weeks);
   return <div>MonthGrid</div>;
 }
