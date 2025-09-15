@@ -1,7 +1,7 @@
-import { format } from "date-fns";
+import { getMonthRange } from "../../../shared/lib/date";
 
 export default function MonthGrid() {
-  console.log(format(new Date(), "yyyy-MM-dd"));
-
+  const { start, end } = getMonthRange(new Date());
+  console.log(start, end);
   return <div>MonthGrid</div>;
 }
