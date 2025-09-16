@@ -1,8 +1,7 @@
 import { startOfMonth, endOfMonth, addDays } from "date-fns";
-import { da } from "date-fns/locale";
 
+// 달력의 출발점, 종료점 등 화면에 렌더링 될 기간을 구하는 함수
 export function getMonthGrid(date: Date) {
-  // 달력의 출발점, 종료점 등 화면에 렌더링 될 기간을 구하는 함수
   const start = startOfMonth(date);
   const end = endOfMonth(date);
 
@@ -14,9 +13,11 @@ export function getMonthGrid(date: Date) {
   const gridStart = addDays(start, -beforeRestDays);
 
   // 6주 x 7일 = 42칸 고정
-  const days: Date[] = Array.from({ length: 42 }, (_, i) =>
-    addDays(gridStart, i)
+  const days: Date[] = Array.from(
+    { length: 42 },
+    (_, i) => addDays(gridStart, i) // (시작일, 0~41번째)
   );
+
   const weeks: Date[][] = [];
   for (let i = 0; i < days.length; i += 7) {
     weeks.push(days.slice(i, i + 7));
@@ -25,13 +26,10 @@ export function getMonthGrid(date: Date) {
   return { start, end, weeks };
 }
 
-// export function getDaysInMonth(date: Date) {
-//   // 해당 달의 모든 날짜를 배열로 반환하는 함수
-//   const start = startOfMonth(date);
-//   const end = endOfMonth(date);
-//   const days = [];
-//   for (let day = start; day <= end; day = addDays(day, 1)) {
-//     days.push(day);
-//   }
-//   return days;
-// }
+// 같은 연, 월인지 검사하는 함수
+export function isSameMonthAndYear(date: Date, base: Date) {
+  return (
+    date.getFullYear() === base.getFullYear() &&
+    date.getMonth() === base.getMonth()
+  );
+}
