@@ -1,5 +1,7 @@
 import classNames from "classnames";
 import { getMonthGrid, isSameMonthAndYear } from "../../../shared/lib/date";
+import { useState } from "react";
+import { addMonths, startOfMonth } from "date-fns";
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -13,13 +15,29 @@ function isToday(date: Date) {
 }
 
 export default function MonthGrid() {
-  const { start, weeks } = getMonthGrid(new Date());
+  const [chosenDate, setChosenDate] = useState(() => startOfMonth(new Date()));
+  const { start, weeks } = getMonthGrid(chosenDate);
+
+  const goPrevMonth = () =>
+    setChosenDate((date) => startOfMonth(addMonths(date, -1)));
+  //   const goToday = () => setChosenDate(startOfMonth(new Date()));
+  const goNextMonth = () =>
+    setChosenDate((date) => startOfMonth(addMonths(date, 1)));
 
   return (
-    <section className="w-full flex flex-col p-3">
-      <span className="font-bold py-2 text-base ">
-        {start.getFullYear()}년 {start.getMonth() + 1}월
-      </span>
+    <section className="w-full h-full flex flex-col py-7 px-2">
+      {/* 헤더 (이전달, 다음달, 오늘) */}
+      <nav className="flex justify-center items-center mb-3 gap-4">
+        <button className="w-5" onClick={goPrevMonth}>
+          {"<"}
+        </button>
+        <span className="font-bold text-base ">
+          {chosenDate.getFullYear()}년 {chosenDate.getMonth() + 1}월
+        </span>
+        <button className="w-5" onClick={goNextMonth}>
+          {">"}
+        </button>
+      </nav>
 
       {/* 요일 */}
       <div className="grid grid-cols-7 gap-[1px]">

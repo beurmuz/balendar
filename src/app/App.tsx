@@ -4,7 +4,7 @@ import Header from "../shared/ui/Header";
 
 function App() {
   return (
-    <div className="App flex flex-col  justify-between min-h-screen">
+    <div className="App flex flex-col min-h-screen">
       <Header />
       <MonthGrid />
       <Footer />
