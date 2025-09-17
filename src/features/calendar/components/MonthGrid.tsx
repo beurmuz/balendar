@@ -3,6 +3,15 @@ import { getMonthGrid, isSameMonthAndYear } from "../../../shared/lib/date";
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
+function isToday(date: Date) {
+  const today = new Date();
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
+}
+
 export default function MonthGrid() {
   const { start, weeks } = getMonthGrid(new Date());
 
@@ -32,6 +41,7 @@ export default function MonthGrid() {
         {weeks.flat().map((day, idx) => {
           const inMonth = isSameMonthAndYear(day, start);
           const weekend = day.getDay();
+          const today = isToday(day);
 
           // 달력에 표시되는 날짜 색상
           const colorClass = inMonth
@@ -51,7 +61,10 @@ export default function MonthGrid() {
               <span
                 className={classNames(
                   "text-xs flex items-center justify-center w-6 h-6 rounded-full",
-                  colorClass
+                  colorClass,
+                  {
+                    "bg-yellow-200 rounded-full": today, // 조건부 클래스: 조건식
+                  }
                 )}
               >
                 {day.getDate()}
