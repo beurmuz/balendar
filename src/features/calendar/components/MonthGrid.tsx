@@ -84,8 +84,8 @@ export default function MonthGrid() {
                   "text-xs flex items-center justify-center w-6 h-6 rounded-full",
                   colorClass,
                   {
-                    "bg-yellow-200 rounded-full": today, // 조건부 클래스: 조건식
                     "bg-gray-200": selected,
+                    "bg-yellow-200 rounded-full": !selected && today, // 조건부 클래스: 조건식
                   }
                 )}
               >
