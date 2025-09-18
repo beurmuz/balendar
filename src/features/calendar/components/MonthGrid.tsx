@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { getMonthGrid, isSameMonthAndYear } from "../../../shared/lib/date";
 import { useState } from "react";
-import { addMonths, startOfMonth } from "date-fns";
+import { addMonths, isSameDay, startOfMonth } from "date-fns";
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -16,11 +16,11 @@ function isToday(date: Date) {
 
 export default function MonthGrid() {
   const [chosenDate, setChosenDate] = useState(() => startOfMonth(new Date()));
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { start, weeks } = getMonthGrid(chosenDate);
 
   const goPrevMonth = () =>
     setChosenDate((date) => startOfMonth(addMonths(date, -1)));
-  //   const goToday = () => setChosenDate(startOfMonth(new Date()));
   const goNextMonth = () =>
     setChosenDate((date) => startOfMonth(addMonths(date, 1)));
 
@@ -61,6 +61,8 @@ export default function MonthGrid() {
           const weekend = day.getDay();
           const today = isToday(day);
 
+          const selected = selectedDate && isSameDay(day, selectedDate);
+
           // 달력에 표시되는 날짜 색상
           const colorClass = inMonth
             ? weekend === 0
@@ -75,6 +77,7 @@ export default function MonthGrid() {
               type="button"
               key={idx}
               className={"min-h-24 grid items-start justify-items-center p-1"}
+              onClick={() => inMonth && setSelectedDate(day)}
             >
               <span
                 className={classNames(
@@ -82,6 +85,7 @@ export default function MonthGrid() {
                   colorClass,
                   {
                     "bg-yellow-200 rounded-full": today, // 조건부 클래스: 조건식
+                    "bg-gray-200": selected,
                   }
                 )}
               >
