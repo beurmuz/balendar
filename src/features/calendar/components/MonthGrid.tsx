@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { getMonthGrid, isSameMonthAndYear } from "../../../shared/lib/date";
-import { useState } from "react";
-import { addMonths, isSameDay, startOfMonth } from "date-fns";
+import { isSameDay } from "date-fns";
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -14,27 +13,34 @@ function isToday(date: Date) {
   );
 }
 
-export default function MonthGrid() {
-  const [chosenDate, setChosenDate] = useState(() => startOfMonth(new Date()));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const { start, weeks } = getMonthGrid(chosenDate);
+type Props = {
+  viewDate: Date;
+  selectedDate: Date | null;
+  onCellClick: (date: Date) => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+};
 
-  const goPrevMonth = () =>
-    setChosenDate((date) => startOfMonth(addMonths(date, -1)));
-  const goNextMonth = () =>
-    setChosenDate((date) => startOfMonth(addMonths(date, 1)));
+export default function MonthGrid({
+  viewDate,
+  selectedDate,
+  onCellClick,
+  onPrevMonth,
+  onNextMonth,
+}: Props) {
+  const { start, weeks } = getMonthGrid(viewDate);
 
   return (
     <section className="w-full h-full flex flex-col py-7 px-2">
       {/* 헤더 (이전달, 다음달, 오늘) */}
       <nav className="flex justify-center items-center mb-3 gap-4">
-        <button className="w-5" onClick={goPrevMonth}>
+        <button className="w-5" onClick={onPrevMonth}>
           {"<"}
         </button>
         <span className="font-bold text-base ">
-          {chosenDate.getFullYear()}년 {chosenDate.getMonth() + 1}월
+          {start.getFullYear()}년 {start.getMonth() + 1}월
         </span>
-        <button className="w-5" onClick={goNextMonth}>
+        <button className="w-5" onClick={onNextMonth}>
           {">"}
         </button>
       </nav>
@@ -77,14 +83,14 @@ export default function MonthGrid() {
               type="button"
               key={idx}
               className={"min-h-24 grid items-start justify-items-center p-1"}
-              onClick={() => inMonth && setSelectedDate(day)}
+              onClick={() => inMonth && onCellClick(day)}
             >
               <span
                 className={classNames(
                   "text-xs flex items-center justify-center w-6 h-6 rounded-full ",
                   colorClass,
                   {
-                    "border-1 border-gray-300": selected,
+                    "bg-gray-200": selected,
                     "bg-yellow-200 rounded-full": !selected && today, // 조건부 클래스: 조건식
                   }
                 )}
