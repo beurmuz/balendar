@@ -81,10 +81,10 @@ export default function MonthGrid() {
             >
               <span
                 className={classNames(
-                  "text-xs flex items-center justify-center w-6 h-6 rounded-full",
+                  "text-xs flex items-center justify-center w-6 h-6 rounded-full ",
                   colorClass,
                   {
-                    "bg-gray-200": selected,
+                    "border-1 border-gray-300": selected,
                     "bg-yellow-200 rounded-full": !selected && today, // 조건부 클래스: 조건식
                   }
                 )}
