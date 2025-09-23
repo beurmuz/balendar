@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { addMonths, startOfMonth } from "date-fns";
 import MonthGrid from "./components/MonthGrid";
+import DayLogSection from "./components/DayLogSection";
 
 export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(() => startOfMonth(new Date()));
@@ -12,8 +13,8 @@ export default function CalendarPage() {
     setViewDate((date) => startOfMonth(addMonths(date, 1)));
 
   return (
-    <>
-      <div>
+    <div className="flex flex-col p-4">
+      <section>
         <MonthGrid
           viewDate={viewDate}
           selectedDate={selectedDate}
@@ -21,10 +22,10 @@ export default function CalendarPage() {
           onPrevMonth={goPrevMonth}
           onNextMonth={goNextMonth}
         />
-      </div>
-      <div>
-        <button>오늘의 건강 상태 기록하기 </button>
-      </div>
-    </>
+      </section>
+      <section>
+        <DayLogSection date={selectedDate} />
+      </section>
+    </div>
   );
 }

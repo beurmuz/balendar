@@ -31,7 +31,7 @@ export default function MonthGrid({
   const { start, weeks } = getMonthGrid(viewDate);
 
   return (
-    <section className="w-full h-full flex flex-col py-7 px-2">
+    <section className="w-full h-full flex flex-col ">
       {/* 헤더 (이전달, 다음달, 오늘) */}
       <nav className="flex justify-center items-center mb-3 gap-4">
         <button className="w-5" onClick={onPrevMonth}>
