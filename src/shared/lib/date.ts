@@ -1,4 +1,7 @@
-import { startOfMonth, getDaysInMonth, addDays } from "date-fns";
+import { startOfMonth, getDaysInMonth, addDays, format } from "date-fns";
+
+export const ymd = (date: Date) => format(date, "yyyy-MM-dd");
+export const hm = (ms: number) => format(ms, "HH:mm");
 
 // 달력의 출발점, 종료점 등 화면에 렌더링 될 기간을 구하는 함수
 export function getMonthGrid(date: Date) {
