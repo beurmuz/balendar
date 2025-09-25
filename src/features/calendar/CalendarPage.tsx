@@ -12,7 +12,7 @@ export default function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
 
-  // 마운트 시 로컬스토리지에서 기록 불러오기
+  // 마운트 시 localStorage에서 기록 불러오기
   useEffect(() => {
     const rawData = localStorage.getItem(STORAGE_KEY);
 
@@ -36,11 +36,22 @@ export default function CalendarPage() {
     [selectedDate]
   );
 
-  // 
+  // 선택된 날짜의 기록만 골라서 DayLogSection에 전달
+  const selectedDayLog = useMemo(
+    () =>
+      selectedYMD ? allLogs.filter((log) => log.date === selectedYMD) : [],
+    [allLogs, selectedYMD]
+  );
 
-  // 추가 함수
+  // 최근 생성된 기록이 위로 오도록 정렬하기
+  const logsOfDay = useMemo(() => {
+    return [...selectedDayLog].sort((a, b) => b.createdAt - a.createdAt);
+  }, [selectedDayLog]);
+
+  // 기록 추가
   const addLog = (text: string) => {
     if (!selectedYMD) return;
+
     const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 
     const item: DailyLog = {
@@ -50,7 +61,7 @@ export default function CalendarPage() {
       createdAt: Date.now(),
     };
 
-    if (!item.text) return;
+    if (!item.text) return; // 빈 입력 방지
     setAllLogs((logs) => [item, ...logs]);
   };
 
