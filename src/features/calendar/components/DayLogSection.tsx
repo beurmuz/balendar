@@ -31,14 +31,17 @@ export default function DayLogSection({
             {date.getMonth() + 1}월 {date.getDate()}일
           </h3>
           {/* 입력폼 */}
-          <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
+          <form
+            onSubmit={handleSubmit}
+            className="flex gap-2 mt-2 p-3 bg-gray-100 rounded"
+          >
             <input
-              className="flex-1 bg-blue-100 rounded text-sm p-2 focus:outline-none"
+              className="flex-1  text-sm focus:outline-none"
               placeholder="새 일정 등록하기"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
-            <button className="p-2 bg-blue-200 rounded text-sm">등록</button>
+            <button className="rounded pl-2 text-sm">등록</button>
           </form>
 
           {/* 일정 리스트 */}
@@ -46,12 +49,12 @@ export default function DayLogSection({
             {logs.map((log) => (
               <li
                 key={log.id}
-                className="p-2 flex justify-between gap-2 bg-gray-100 rounded"
+                className="p-3 flex justify-between gap-2 bg-blue-200 rounded"
               >
                 <div className="flex-1">{log.text}</div>
-                <div className="flex items-center gap-3 shrink-0 text-gray-500">
+                <div className="flex items-center gap-3 shrink-0 text-gray-700">
                   <button
-                    className="px-2 py-1 text-xs"
+                    className="pl-2 text-sm"
                     onClick={() => onDeleteLog(log.id)}
                   >
                     삭제
