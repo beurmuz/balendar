@@ -82,7 +82,7 @@ export default function MonthGrid({
             <button
               type="button"
               key={idx}
-              className={"min-h-24 grid items-start justify-items-center p-1"}
+              className={"min-h-20 grid items-start justify-items-center p-1"}
               onClick={() => inMonth && onCellClick(day)}
             >
               <span

@@ -18,7 +18,7 @@ export default function DayLogSection({
   const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // 기본 동작 실행 방지
     onAddLog(text);
     setText("");
   };
@@ -28,43 +28,41 @@ export default function DayLogSection({
       {date ? (
         <div className="border-t-1 border-gray-200 py-4">
           <h3 className="font-bold text-sm mb-2">
-            {date.getMonth() + 1}월 {date.getDate()}일의 기록
+            {date.getMonth() + 1}월 {date.getDate()}일
           </h3>
+          {/* 입력폼 */}
           <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
             <input
-              className="flex-1 border-1 border-gray-200 rounded text-sm p-2"
-              placeholder="기록을 입력하세요"
+              className="flex-1 bg-blue-100 rounded text-sm p-2 focus:outline-none"
+              placeholder="새 일정 등록하기"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
-            <button className="p-2 bg-gray-200 rounded text-sm">추가</button>
+            <button className="p-2 bg-blue-200 rounded text-sm">등록</button>
           </form>
 
-          <ul className="mt-3 divide-y text-sm">
-            {logs.map((l) => (
+          {/* 일정 리스트 */}
+          <ul className="mt-3 gap-2 text-sm flex flex-items-center flex-col">
+            {logs.map((log) => (
               <li
-                key={l.id}
-                className="py-2 flex items-center justify-between gap-2"
+                key={log.id}
+                className="p-2 flex justify-between gap-2 bg-gray-100 rounded"
               >
-                <div className="flex-1">{l.text}</div>
+                <div className="flex-1">{log.text}</div>
                 <div className="flex items-center gap-3 shrink-0 text-gray-500">
                   <button
-                    className="px-2 py-1 border rounded text-xs"
-                    onClick={() => onDeleteLog(l.id)}
+                    className="px-2 py-1 text-xs"
+                    onClick={() => onDeleteLog(log.id)}
                   >
                     삭제
                   </button>
                 </div>
               </li>
             ))}
-            {logs.length === 0 && (
-              <li className="py-3 text-gray-400">기록 없음</li>
-            )}
+            {logs.length === 0 && null}
           </ul>
         </div>
-      ) : (
-        <p>날짜를 선택하세요.</p>
-      )}
+      ) : null}
     </section>
   );
 }
