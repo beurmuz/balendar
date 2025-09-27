@@ -1,5 +1,9 @@
 import classNames from "classnames";
-import { getMonthGrid, isSameMonthAndYear } from "../../../shared/lib/date";
+import {
+  getMonthGrid,
+  isSameMonthAndYear,
+  ymd,
+} from "../../../shared/lib/date";
 import { isSameDay } from "date-fns";
 
 const WEEK_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -19,6 +23,7 @@ type Props = {
   onCellClick: (date: Date) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  indicatorsByYMD: Record<string, number>;
 };
 
 export default function MonthGrid({
@@ -27,6 +32,7 @@ export default function MonthGrid({
   onCellClick,
   onPrevMonth,
   onNextMonth,
+  indicatorsByYMD,
 }: Props) {
   const { start, weeks } = getMonthGrid(viewDate);
 
@@ -78,6 +84,9 @@ export default function MonthGrid({
               : "text-black"
             : "text-gray-400";
 
+          const key = ymd(day);
+          const count = (inMonth && indicatorsByYMD[key]) || 0;
+
           return (
             <button
               type="button"
@@ -85,6 +94,7 @@ export default function MonthGrid({
               className={"min-h-20 grid items-start justify-items-center p-1"}
               onClick={() => inMonth && onCellClick(day)}
             >
+              {/* 날짜 숫자 */}
               <span
                 className={classNames(
                   "text-xs flex items-center justify-center w-6 h-6 rounded-full ",
@@ -97,6 +107,13 @@ export default function MonthGrid({
               >
                 {day.getDate()}
               </span>
+
+              {/* 일정 개수 표시 */}
+              {count > 0 && (
+                <span className="text-xs text-white bg-blue-400 w-4 h-4 rounded-full flex items-center justify-center mt-1">
+                  {count}
+                </span>
+              )}
             </button>
           );
         })}

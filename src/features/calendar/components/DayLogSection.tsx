@@ -7,6 +7,7 @@ type Props = {
   logs: DailyLog[];
   onAddLog: (text: string) => void;
   onDeleteLog: (id: string) => void;
+  // onUpdateLog: (id: string, text: string) => void;
 };
 
 export default function DayLogSection({
@@ -14,7 +15,8 @@ export default function DayLogSection({
   logs,
   onAddLog,
   onDeleteLog,
-}: Props) {
+}: // onUpdateLog,
+Props) {
   const [text, setText] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -53,6 +55,12 @@ export default function DayLogSection({
               >
                 <div className="flex-1">{log.text}</div>
                 <div className="flex items-center gap-3 shrink-0 text-gray-700">
+                  {/* <button
+                    className="pl-2 text-sm"
+                    onClick={() => onUpdateLog(log.id, text)}
+                  >
+                    수정
+                  </button> */}
                   <button
                     className="pl-2 text-sm"
                     onClick={() => onDeleteLog(log.id)}

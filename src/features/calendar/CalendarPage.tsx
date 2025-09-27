@@ -69,10 +69,30 @@ export default function CalendarPage() {
     setAllLogs((logs) => logs.filter((log) => log.id !== id));
   };
 
+  // const updateLog = (id: string, text: string) => {
+  //   allLogs.map((log) => {
+  //     if (log.id === id) {
+  //       console.log(log);
+  //     }
+  //   });
+  //   setAllLogs((logs) =>
+  //     logs.map((log) => (log.id === id ? { ...log, text } : log))
+  //   );
+  // };
+
   const goPrevMonth = () =>
     setViewDate((date) => startOfMonth(addMonths(date, -1)));
   const goNextMonth = () =>
     setViewDate((date) => startOfMonth(addMonths(date, 1)));
+
+  // 날짜별 일정 개수 집계하기 -> allLogs -> { 'YYYY-MM-DD': number }
+  const countsByYMD = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const l of allLogs) {
+      out[l.date] = (out[l.date] ?? 0) + 1;
+    }
+    return out;
+  }, [allLogs]);
 
   return (
     <div className="flex flex-col p-4">
@@ -83,6 +103,7 @@ export default function CalendarPage() {
           onCellClick={setSelectedDate}
           onPrevMonth={goPrevMonth}
           onNextMonth={goNextMonth}
+          indicatorsByYMD={countsByYMD}
         />
       </section>
       <section>
@@ -91,6 +112,7 @@ export default function CalendarPage() {
           logs={logsOfDay}
           onAddLog={addLog}
           onDeleteLog={deleteLog}
+          // onUpdateLog={updateLog}
         />
       </section>
     </div>
