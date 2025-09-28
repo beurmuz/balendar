@@ -9,7 +9,7 @@ const STORAGE_KEY = "balendar-logs-v1";
 
 export default function CalendarPage() {
   const [viewDate, setViewDate] = useState(() => startOfMonth(new Date()));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
 
   // 마운트 시 localStorage에서 기록 불러오기
@@ -30,17 +30,13 @@ export default function CalendarPage() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allLogs));
   }, [allLogs]);
 
-  // 선택된 날짜를 YMD 문자열로 변환
-  const selectedYMD = useMemo(
-    () => (selectedDate ? ymd(selectedDate) : null),
-    [selectedDate]
-  );
+  // 날짜를 YMD 문자열로 변환
+  const dateToYMD = useMemo(() => ymd(selectedDate), [selectedDate]);
 
   // 선택된 날짜의 기록만 골라서 DayLogSection에 전달
   const selectedDayLog = useMemo(
-    () =>
-      selectedYMD ? allLogs.filter((log) => log.date === selectedYMD) : [],
-    [allLogs, selectedYMD]
+    () => (dateToYMD ? allLogs.filter((log) => log.date === dateToYMD) : []),
+    [allLogs, dateToYMD]
   );
 
   // 최근 생성된 기록이 위로 오도록 정렬하기
@@ -50,13 +46,13 @@ export default function CalendarPage() {
 
   // 기록 추가
   const addLog = (text: string) => {
-    if (!selectedYMD) return;
+    if (!dateToYMD) return;
 
     const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 
     const item: DailyLog = {
       id,
-      date: selectedYMD,
+      date: dateToYMD,
       text: text.trim(),
       createdAt: Date.now(),
     };
