@@ -14,12 +14,26 @@ export default function CalendarPage() {
 
   // 마운트 시 localStorage에서 기록 불러오기
   useEffect(() => {
-    const rawData = localStorage.getItem(STORAGE_KEY);
+    const rawData = localStorage.getItem(STORAGE_KEY); // 문자열로 저장된 JSON 데이터 가져오기
 
     if (!rawData) return;
     try {
-      const parsed = JSON.parse(rawData) as any[];
-      setAllLogs(parsed);
+      const parsed = JSON.parse(rawData) as any[]; // 문자열 -> 객체 배열
+      const fixed = parsed.map((log) => ({
+        // 객체 속성 보정
+        ...log,
+        createdAt:
+          typeof log.createdAt === "number"
+            ? log.createdAt
+            : new Date(log.createdAt).getTime(),
+        updatedAt:
+          log.updatedAt === null
+            ? undefined
+            : typeof log.updatedAt === "number"
+            ? log.updatedAt
+            : new Date(log.updatedAt).getTime(),
+      }));
+      setAllLogs(fixed);
     } catch {
       /* noop */
     }
@@ -65,16 +79,14 @@ export default function CalendarPage() {
     setAllLogs((logs) => logs.filter((log) => log.id !== id));
   };
 
-  // const updateLog = (id: string, text: string) => {
-  //   allLogs.map((log) => {
-  //     if (log.id === id) {
-  //       console.log(log);
-  //     }
-  //   });
-  //   setAllLogs((logs) =>
-  //     logs.map((log) => (log.id === id ? { ...log, text } : log))
-  //   );
-  // };
+  const updateLog = (id: string, patch: { text?: string; memo?: string }) => {
+    // patch: 변경할 내용 (부분 수정)
+    setAllLogs((prev) =>
+      prev.map((log) =>
+        log.id === id ? { ...log, ...patch, updatedAt: Date.now() } : log
+      )
+    );
+  };
 
   const goPrevMonth = () =>
     setViewDate((date) => startOfMonth(addMonths(date, -1)));
@@ -108,7 +120,7 @@ export default function CalendarPage() {
           logs={logsOfDay}
           onAddLog={addLog}
           onDeleteLog={deleteLog}
-          // onUpdateLog={updateLog}
+          onUpdateLog={updateLog}
         />
       </section>
     </div>

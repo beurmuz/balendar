@@ -6,5 +6,5 @@ export type DailyLog = {
   text: string;
   memo?: string;
   createdAt: number;
-  updatedAt: number;
+  updatedAt?: number;
 };

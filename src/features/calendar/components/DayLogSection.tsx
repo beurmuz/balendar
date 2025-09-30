@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { hm } from "../../../shared/lib/date";
 import type { DailyLog } from "../types";
 import { isSameDay } from "date-fns";
@@ -8,7 +8,7 @@ type Props = {
   logs: DailyLog[];
   onAddLog: (text: string) => void;
   onDeleteLog: (id: string) => void;
-  // onUpdateLog: (id: string, text: string) => void;
+  onUpdateLog?: (id: string, patch: { text?: string; memo?: string }) => void;
 };
 
 export default function DayLogSection({
@@ -16,19 +16,61 @@ export default function DayLogSection({
   logs,
   onAddLog,
   onDeleteLog,
-}: // onUpdateLog,
-Props) {
+  onUpdateLog,
+}: Props) {
   const [text, setText] = useState("");
 
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const [editMemo, setEditMemo] = useState("");
+
+  const isToday = date.toDateString() === new Date().toDateString();
   const dateHeader = isSameDay(date, new Date())
     ? "오늘"
     : `${date.getMonth() + 1}월 ${date.getDate()}일`;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const submitNew = (e: React.FormEvent) => {
     e.preventDefault(); // 기본 동작 실행 방지
     onAddLog(text);
     setText("");
   };
+
+  const openSheet = (log: DailyLog) => {
+    setOpenId(log.id);
+    setEditText(log.text);
+    setEditMemo(log.memo || "");
+  };
+
+  const closeSheet = () => {
+    setOpenId(null);
+    setEditText("");
+    setEditMemo("");
+  };
+
+  const saveEdit = () => {
+    if (!openId) return;
+    const t = editText.trim();
+    onUpdateLog(openId, {
+      text: t || undefined,
+      memo: editMemo.trim() || undefined,
+    });
+    closeSheet();
+  };
+
+  const deleteFromSheet = () => {
+    if (!openId) return;
+    onDeleteLog(openId);
+    closeSheet();
+  };
+
+  // ESC 로 닫기
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSheet();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
     <section className="">
@@ -37,7 +79,7 @@ Props) {
 
         {/* 입력폼 */}
         <form
-          onSubmit={handleSubmit}
+          onSubmit={submitNew}
           className="flex gap-2 mt-2 p-3 bg-gray-100 rounded"
         >
           <input
@@ -54,22 +96,23 @@ Props) {
           {logs.map((log) => (
             <li
               key={log.id}
-              className="p-3 flex justify-between gap-2 bg-blue-200 rounded"
+              className="w-full p-3 flex justify-between gap-2 bg-blue-200 rounded cursor-pointer"
+              onClick={() => openSheet(log)}
             >
-              <div className="flex-1">{log.text}</div>
-              <div className="flex items-center gap-3 shrink-0 text-gray-700">
-                {/* <button
-                    className="pl-2 text-sm"
-                    onClick={() => onUpdateLog(log.id, text)}
-                  >
-                    수정
-                  </button> */}
-                <button
-                  className="pl-2 text-sm"
-                  onClick={() => onDeleteLog(log.id)}
-                >
-                  삭제
-                </button>
+              <div className="flex-1">
+                <div className="font-medium">
+                  {log.text}
+                  {log.updatedAt && log.updatedAt > log.createdAt && (
+                    <span className="ml-2 text-[10px] text-gray-700">
+                      편집됨
+                    </span>
+                  )}
+                </div>
+                {log.memo && (
+                  <div className="text-xs text-gray-700 mt-0.5 line-clamp-1">
+                    {log.memo}
+                  </div>
+                )}
               </div>
             </li>
           ))}
