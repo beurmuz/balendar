@@ -119,6 +119,68 @@ export default function DayLogSection({
           {logs.length === 0 && null}
         </ul>
       </div>
+
+      {/* 바텀시트 */}
+      {openId && (
+        <>
+          {/* overlay */}
+          <div className="fixed inset-0 bg-black/30" onClick={closeSheet} />
+          {/* sheet */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed left-0 right-0 bottom-0 rounded-t-2xl bg-white p-4 shadow-2xl
+                       animate-[slideUp_160ms_ease-out] max-h-[70vh] overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto max-w-md">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold text-sm">일정 상세</h4>
+                <button className="text-gray-500 text-sm" onClick={closeSheet}>
+                  닫기
+                </button>
+              </div>
+
+              <label className="block text-xs text-gray-500 mb-1">제목</label>
+              <input
+                className="w-full border rounded p-2 text-sm mb-3"
+                value={editText}
+                onChange={(e) => setEditText(e.target.value)}
+                autoFocus
+              />
+
+              <label className="block text-xs text-gray-500 mb-1">
+                메모 (선택)
+              </label>
+              <textarea
+                className="w-full border rounded p-2 text-sm min-h-[80px]"
+                placeholder="간단한 메모를 적어보세요"
+                value={editMemo}
+                onChange={(e) => setEditMemo(e.target.value)}
+              />
+
+              <div className="mt-4 flex gap-2">
+                <button
+                  className="flex-1 bg-blue-600 text-white rounded py-2 text-sm disabled:opacity-50"
+                  onClick={saveEdit}
+                  disabled={!editText.trim()}
+                >
+                  저장
+                </button>
+                <button
+                  className="flex-1 border border-red-500 text-red-600 rounded py-2 text-sm"
+                  onClick={deleteFromSheet}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          </div>
+          <style>{`
+            @keyframes slideUp { from { transform: translateY(16px); opacity: .8 } to { transform: translateY(0); opacity: 1 } }
+          `}</style>
+        </>
+      )}
     </section>
   );
 }
