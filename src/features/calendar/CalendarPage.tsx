@@ -14,13 +14,12 @@ export default function CalendarPage() {
 
   // 마운트 시 localStorage에서 기록 불러오기
   useEffect(() => {
-    const rawData = localStorage.getItem(STORAGE_KEY); // 문자열로 저장된 JSON 데이터 가져오기
-
+    const rawData = localStorage.getItem(STORAGE_KEY);
     if (!rawData) return;
+
     try {
-      const parsed = JSON.parse(rawData) as any[]; // 문자열 -> 객체 배열
-      const fixed = parsed.map((log) => ({
-        // 객체 속성 보정
+      const parsed = JSON.parse(rawData) as any[];
+      const fixed: DailyLog[] = parsed.map((log) => ({
         ...log,
         createdAt:
           typeof log.createdAt === "number"
@@ -58,8 +57,8 @@ export default function CalendarPage() {
     return [...selectedDayLog].sort((a, b) => b.createdAt - a.createdAt);
   }, [selectedDayLog]);
 
-  // 기록 추가
-  const addLog = (text: string) => {
+  // Create
+  const createLog = (text: string) => {
     if (!dateToYMD) return;
 
     const id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -75,12 +74,13 @@ export default function CalendarPage() {
     setAllLogs((logs) => [item, ...logs]);
   };
 
+  // Delete
   const deleteLog = (id: string) => {
     setAllLogs((logs) => logs.filter((log) => log.id !== id));
   };
 
+  // Update
   const updateLog = (id: string, patch: { text?: string; memo?: string }) => {
-    // patch: 변경할 내용 (부분 수정)
     setAllLogs((prev) =>
       prev.map((log) =>
         log.id === id ? { ...log, ...patch, updatedAt: Date.now() } : log
@@ -118,7 +118,7 @@ export default function CalendarPage() {
         <DayLogSection
           date={selectedDate}
           logs={logsOfDay}
-          onAddLog={addLog}
+          onCreateLog={createLog}
           onDeleteLog={deleteLog}
           onUpdateLog={updateLog}
         />
