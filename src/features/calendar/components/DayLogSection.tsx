@@ -6,46 +6,53 @@ import { isSameDay } from "date-fns";
 type Props = {
   date: Date;
   logs: DailyLog[];
-  onAddLog: (text: string) => void;
+  onCreateLog: (text: string) => void;
   onDeleteLog: (id: string) => void;
-  onUpdateLog?: (id: string, patch: { text?: string; memo?: string }) => void;
+  onUpdateLog: (id: string, patch: { text?: string; memo?: string }) => void;
 };
 
 export default function DayLogSection({
   date,
   logs,
-  onAddLog,
+  onCreateLog,
   onDeleteLog,
   onUpdateLog,
 }: Props) {
   const [text, setText] = useState("");
 
+  // bottom sheet state
   const [openId, setOpenId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [editMemo, setEditMemo] = useState("");
 
-  const isToday = date.toDateString() === new Date().toDateString();
   const dateHeader = isSameDay(date, new Date())
     ? "오늘"
     : `${date.getMonth() + 1}월 ${date.getDate()}일`;
 
-  const submitNew = (e: React.FormEvent) => {
+  const submitLog = (e: React.FormEvent) => {
     e.preventDefault(); // 기본 동작 실행 방지
-    onAddLog(text);
+    onCreateLog(text);
     setText("");
   };
 
+  // bottom Sheet open
   const openSheet = (log: DailyLog) => {
     setOpenId(log.id);
     setEditText(log.text);
     setEditMemo(log.memo || "");
   };
 
-  const closeSheet = () => {
-    setOpenId(null);
-    setEditText("");
-    setEditMemo("");
-  };
+  // const openSheet = (log: DailyLog) => {
+  //   setOpenId(log.id);
+  //   setEditText(log.text);
+  //   setEditMemo(log.memo || "");
+  // };
+
+  // const closeSheet = () => {
+  //   setOpenId(null);
+  //   setEditText("");
+  //   setEditMemo("");
+  // };
 
   const saveEdit = () => {
     if (!openId) return;
@@ -79,7 +86,7 @@ export default function DayLogSection({
 
         {/* 입력폼 */}
         <form
-          onSubmit={submitNew}
+          onSumbit={submitLog}
           className="flex gap-2 mt-2 p-3 bg-gray-100 rounded"
         >
           <input
