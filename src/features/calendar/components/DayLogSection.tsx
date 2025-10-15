@@ -112,6 +112,71 @@ export default function DayLogSection({
           ))}
         </ul>
       </div>
+
+      {/* bottom sheet */}
+      {openId && (
+        <>
+          {/* overlay */}
+          <div className="fixed inset-0 bg-black/30" onClick={closeSheet} />
+
+          {/* sheet */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed left-0 right-0 bottom-0 bg-white max-h-[70vh] rounded-t-2xl px-4 py-7 animate-[slideUp_160ms_ease-out]"
+          >
+            <label className="block py-1">일정명</label>
+            <input
+              className="w-full border border-gray-300 rounded p-2 mb-7
+              focus:outline-none
+              focus-visible:outline-none
+              focus:ring-0
+              focus-visible:ring-0
+              focus:border-blue-400
+              "
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              autoFocus
+            />
+            <label className="block py-1">
+              메모{" "}
+              <span className="text-xs text-gray-500">
+                ({editMemo.length} / {150})
+              </span>
+            </label>
+            <textarea
+              className="block w-full rounded bg-white mb-7 p-2
+               ring-1 ring-gray-300
+               focus:outline-none focus:ring-1
+               focus:ring-blue-400
+               focus:border-transparent
+               resize-none h-30 appearance-none"
+              rows={4}
+              placeholder="메모를 적어보세요."
+              value={editMemo}
+              onChange={(e) => setEditMemo(e.target.value)}
+              maxLength={150}
+            />
+
+            {/* 버튼 */}
+            <div className="flex gap-2">
+              <button
+                className="flex-1 bg-blue-400 text-white p-2 rounded"
+                onClick={saveEdit}
+                disabled={!editText.trim()}
+              >
+                저장
+              </button>
+              <button
+                className="flex-1 bg-gray-400 text-white p-2 rounded"
+                onClick={deleteSheet}
+              >
+                삭제
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }
