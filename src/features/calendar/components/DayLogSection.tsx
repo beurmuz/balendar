@@ -76,7 +76,7 @@ export default function DayLogSection({
         {/* 입력폼 */}
         <form
           onSubmit={submitLog}
-          className="flex gap-2 mt-2 p-3 border-1 border-gray-200 rounded"
+          className="flex gap-2 mt-2 p-3 border border-gray-200 rounded"
         >
           <input
             className="flex-1 text-sm focus:outline-none"
@@ -89,27 +89,37 @@ export default function DayLogSection({
 
         {/* 등록한 일정 리스트 */}
         <ul className="mt-3 gap-2 text-sm flex flex-items-center flex-col border-t-1 border-gray-200 pt-3">
-          {logs.map((log) => (
-            <li
-              key={log.id}
-              className="w-full p-3 flex justify-between gap-2 bg-gray-100 rounded cursor-pointer"
-              onClick={() => openSheet(log)}
-            >
-              <div>{log.text}</div>
-              <div>
-                {log.memo && (
-                  <span className="bg-pink-400 m-1 px-1 py-0.5 rounded text-white text-xs font-medium">
-                    메모
-                  </span>
-                )}
-                {log.updatedAt && log.updatedAt > log.createdAt && (
-                  <span className="bg-orange-400 mr-1 px-1 py-0.5 rounded text-white text-xs font-medium">
-                    수정됨
-                  </span>
-                )}
-              </div>
-            </li>
-          ))}
+          {logs.map((log) => {
+            const edited =
+              typeof log.updatedAt === "number" &&
+              Number.isFinite(log.updatedAt) &&
+              log.updatedAt > log.createdAt;
+
+            const hasMemo =
+              typeof log.memo === "string" && log.memo.trim().length > 0;
+
+            return (
+              <li
+                key={log.id}
+                className="w-full p-3 flex justify-between gap-2 bg-gray-100 rounded cursor-pointer"
+                onClick={() => openSheet(log)}
+              >
+                <div>{log.text}</div>
+                <div>
+                  {hasMemo && (
+                    <span className="bg-pink-400 m-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                      메모
+                    </span>
+                  )}
+                  {edited && (
+                    <span className="bg-orange-400 mr-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                      수정됨
+                    </span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
 

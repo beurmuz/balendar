@@ -19,18 +19,15 @@ export default function CalendarPage() {
 
     try {
       const parsed = JSON.parse(rawData) as any[];
-      const fixed: DailyLog[] = parsed.map((log) => ({
-        ...log,
-        createdAt:
-          typeof log.createdAt === "number"
-            ? log.createdAt
-            : new Date(log.createdAt).getTime(),
-        updatedAt:
-          log.updatedAt === null
-            ? undefined
-            : typeof log.updatedAt === "number"
-            ? log.updatedAt
-            : new Date(log.updatedAt).getTime(),
+      const toMs = (v: any) => {
+        if (typeof v === "number" && Number.isFinite(v)) return v;
+        const t = new Date(v).getTime();
+        return Number.isFinite(t) ? t : undefined;
+      };
+      const fixed: DailyLog[] = parsed.map((l) => ({
+        ...l,
+        createdAt: toMs(l.createdAt) ?? Date.now(),
+        updatedAt: toMs(l.updatedAt), // 없거나 이상하면 undefined
       }));
       setAllLogs(fixed);
     } catch {
