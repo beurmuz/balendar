@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { hm } from "../../../shared/lib/date";
 import type { DailyLog } from "../types";
 import { isSameDay } from "date-fns";
