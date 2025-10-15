@@ -42,42 +42,31 @@ export default function DayLogSection({
     setEditMemo(log.memo || "");
   };
 
-  // const openSheet = (log: DailyLog) => {
-  //   setOpenId(log.id);
-  //   setEditText(log.text);
-  //   setEditMemo(log.memo || "");
-  // };
-
-  // const closeSheet = () => {
-  //   setOpenId(null);
-  //   setEditText("");
-  //   setEditMemo("");
-  // };
-
-  const saveEdit = () => {
-    if (!openId) return;
-    const t = editText.trim();
-    onUpdateLog(openId, {
-      text: t || undefined,
-      memo: editMemo.trim() || undefined,
-    });
-    closeSheet();
+  // bottom Sheet close
+  const closeSheet = () => {
+    setOpenId(null);
+    setEditText("");
+    setEditMemo("");
   };
 
-  const deleteFromSheet = () => {
+  // 수정한 내용 저장
+  const saveEdit = () => {
+    if (!openId) return;
+
+    const newText = editText.trim();
+    onUpdateLog(openId, {
+      text: newText || undefined,
+      memo: editMemo.trim() || undefined,
+    });
+    closeSheet(); // 자동 닫기
+  };
+
+  // 일정 삭제
+  const deleteSheet = () => {
     if (!openId) return;
     onDeleteLog(openId);
     closeSheet();
   };
-
-  // ESC 로 닫기
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeSheet();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <section className="">
@@ -86,11 +75,11 @@ export default function DayLogSection({
 
         {/* 입력폼 */}
         <form
-          onSumbit={submitLog}
-          className="flex gap-2 mt-2 p-3 bg-gray-100 rounded"
+          onSubmit={submitLog}
+          className="flex gap-2 mt-2 p-3 border-1 border-gray-200 rounded"
         >
           <input
-            className="flex-1  text-sm focus:outline-none"
+            className="flex-1 text-sm focus:outline-none"
             placeholder="새 일정 등록하기"
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -98,96 +87,31 @@ export default function DayLogSection({
           <button className="rounded pl-2 text-sm">등록</button>
         </form>
 
-        {/* 일정 리스트 */}
-        <ul className="mt-3 gap-2 text-sm flex flex-items-center flex-col">
+        {/* 등록한 일정 리스트 */}
+        <ul className="mt-3 gap-2 text-sm flex flex-items-center flex-col border-t-1 border-gray-200 pt-3">
           {logs.map((log) => (
             <li
               key={log.id}
-              className="w-full p-3 flex justify-between gap-2 bg-blue-200 rounded cursor-pointer"
+              className="w-full p-3 flex justify-between gap-2 bg-gray-100 rounded cursor-pointer"
               onClick={() => openSheet(log)}
             >
-              <div className="flex-1">
-                <div className="font-medium">
-                  {log.text}
-                  {log.updatedAt && log.updatedAt > log.createdAt && (
-                    <span className="ml-2 text-[10px] text-gray-700">
-                      편집됨
-                    </span>
-                  )}
-                </div>
+              <div>{log.text}</div>
+              <div>
                 {log.memo && (
-                  <div className="text-xs text-gray-700 mt-0.5 line-clamp-1">
-                    {log.memo}
-                  </div>
+                  <span className="bg-pink-400 m-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                    메모
+                  </span>
+                )}
+                {log.updatedAt && log.updatedAt > log.createdAt && (
+                  <span className="bg-orange-400 mr-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                    수정됨
+                  </span>
                 )}
               </div>
             </li>
           ))}
-          {logs.length === 0 && null}
         </ul>
       </div>
-
-      {/* 바텀시트 */}
-      {openId && (
-        <>
-          {/* overlay */}
-          <div className="fixed inset-0 bg-black/30" onClick={closeSheet} />
-          {/* sheet */}
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed left-0 right-0 bottom-0 rounded-t-2xl bg-white p-4 shadow-2xl
-                       animate-[slideUp_160ms_ease-out] max-h-[70vh] overflow-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mx-auto max-w-md">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-semibold text-sm">일정 상세</h4>
-                <button className="text-gray-500 text-sm" onClick={closeSheet}>
-                  닫기
-                </button>
-              </div>
-
-              <label className="block text-xs text-gray-500 mb-1">제목</label>
-              <input
-                className="w-full border rounded p-2 text-sm mb-3"
-                value={editText}
-                onChange={(e) => setEditText(e.target.value)}
-                autoFocus
-              />
-
-              <label className="block text-xs text-gray-500 mb-1">
-                메모 (선택)
-              </label>
-              <textarea
-                className="w-full border rounded p-2 text-sm min-h-[80px]"
-                placeholder="간단한 메모를 적어보세요"
-                value={editMemo}
-                onChange={(e) => setEditMemo(e.target.value)}
-              />
-
-              <div className="mt-4 flex gap-2">
-                <button
-                  className="flex-1 bg-blue-600 text-white rounded py-2 text-sm disabled:opacity-50"
-                  onClick={saveEdit}
-                  disabled={!editText.trim()}
-                >
-                  저장
-                </button>
-                <button
-                  className="flex-1 border border-red-500 text-red-600 rounded py-2 text-sm"
-                  onClick={deleteFromSheet}
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          </div>
-          <style>{`
-            @keyframes slideUp { from { transform: translateY(16px); opacity: .8 } to { transform: translateY(0); opacity: 1 } }
-          `}</style>
-        </>
-      )}
     </section>
   );
 }
