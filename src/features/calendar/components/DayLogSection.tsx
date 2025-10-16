@@ -129,13 +129,8 @@ export default function DayLogSection({
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {hasMemo && (
-                    <span className="bg-rose-400 px-1 py-0.5 rounded text-white text-xs font-medium">
-                      메모
-                    </span>
-                  )}
-                  {edited && (
                     <span className="bg-amber-400 px-1 py-0.5 rounded text-white text-xs font-medium">
-                      수정됨
+                      메모
                     </span>
                   )}
                   {hasDone && (
@@ -162,23 +157,24 @@ export default function DayLogSection({
             aria-modal="true"
             className="fixed left-0 right-0 bottom-0 bg-white max-h-[70vh] rounded-t-2xl px-4 py-7 animate-[slideUp_160ms_ease-out]"
           >
-            <label className="block py-1 text-sm font-medium">일정</label>
+            {/* <label className="block py-1 text-sm font-medium">일정</label> */}
             <input
-              className="w-full border border-gray-300 rounded p-2 mb-7 text-sm
-              focus:outline-none focus:ring-0 focus:border-blue-400"
+              // className="w-full border border-gray-300 rounded p-2 mb-7 text-sm
+              className="w-full rounded mb-3 text-xl font-bold
+              focus:outline-none focus:ring-1 focus:ring-blue-400"
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
               autoFocus
             />
 
             <label className="block py-1 text-sm font-medium">
-              메모{" "}
+              메모
               <span className="text-xs text-gray-500">
                 ({editMemo.length} / {150})
               </span>
             </label>
             <textarea
-              className="block w-full rounded bg-white mb-7 p-2 text-sm
+              className="block w-full rounded bg-gray-200 mb-7 p-2 text-sm
                ring-1 ring-gray-300
                focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent
                resize-none h-30 appearance-none"
@@ -188,6 +184,12 @@ export default function DayLogSection({
               onChange={(e) => setEditMemo(e.target.value)}
               maxLength={150}
             />
+            {current?.updatedAt && (
+              <p className="text-xs text-gray-500 mb-4">
+                최근 수정:{" "}
+                {Math.round((Date.now() - current.updatedAt) / 60000)}분 전
+              </p>
+            )}
 
             {/* 버튼 */}
             <div className="flex gap-2">
@@ -198,7 +200,7 @@ export default function DayLogSection({
                 삭제
               </button>
               <button
-                className="flex-1 bg-amber-400 text-white p-2 rounded disabled:opacity-50"
+                className="flex-1 bg-blue-400 text-white p-2 rounded disabled:opacity-50"
                 onClick={saveEdit}
                 disabled={!editText.trim()}
               >
