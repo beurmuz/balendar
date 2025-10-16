@@ -103,11 +103,6 @@ export default function DayLogSection({
         {/* 등록한 일정 리스트 */}
         <ul className="mt-3 gap-2 text-sm flex flex-items-center flex-col border-t-1 border-gray-200 pt-3">
           {logs.map((log) => {
-            const edited =
-              typeof log.updatedAt === "number" &&
-              Number.isFinite(log.updatedAt) &&
-              log.updatedAt > log.createdAt;
-
             const hasMemo =
               typeof log.memo === "string" && log.memo.trim().length > 0;
 
