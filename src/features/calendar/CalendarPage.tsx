@@ -28,6 +28,7 @@ export default function CalendarPage() {
         ...l,
         createdAt: toMs(l.createdAt) ?? Date.now(),
         updatedAt: toMs(l.updatedAt), // 없거나 이상하면 undefined
+        done: typeof l.done === "boolean" ? l.done : false,
       }));
       setAllLogs(fixed);
     } catch {
@@ -65,6 +66,7 @@ export default function CalendarPage() {
       date: dateToYMD,
       text: text.trim(),
       createdAt: Date.now(),
+      done: false,
     };
 
     if (!item.text) return; // 빈 입력 방지
@@ -82,6 +84,13 @@ export default function CalendarPage() {
       prev.map((log) =>
         log.id === id ? { ...log, ...patch, updatedAt: Date.now() } : log
       )
+    );
+  };
+
+  // done check
+  const toggleDone = (id: string) => {
+    setAllLogs((prev) =>
+      prev.map((log) => (log.id === id ? { ...log, done: !log.done } : log))
     );
   };
 
@@ -118,6 +127,7 @@ export default function CalendarPage() {
           onCreateLog={createLog}
           onDeleteLog={deleteLog}
           onUpdateLog={updateLog}
+          onToggleDone={toggleDone}
         />
       </section>
     </div>

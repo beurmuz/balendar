@@ -1,5 +1,4 @@
-import { useState } from "react";
-// import { hm } from "../../../shared/lib/date";
+import { useMemo, useState } from "react";
 import type { DailyLog } from "../types";
 import { isSameDay } from "date-fns";
 
@@ -9,6 +8,7 @@ type Props = {
   onCreateLog: (text: string) => void;
   onDeleteLog: (id: string) => void;
   onUpdateLog: (id: string, patch: { text?: string; memo?: string }) => void;
+  onToggleDone: (id: string) => void;
 };
 
 export default function DayLogSection({
@@ -17,6 +17,7 @@ export default function DayLogSection({
   onCreateLog,
   onDeleteLog,
   onUpdateLog,
+  onToggleDone,
 }: Props) {
   const [text, setText] = useState("");
 
@@ -29,8 +30,15 @@ export default function DayLogSection({
     ? "오늘"
     : `${date.getMonth() + 1}월 ${date.getDate()}일`;
 
+  // 시트가 열려 있을 때 현재 항목(파생)
+  const current = useMemo(
+    () => (openId ? logs.find((l) => l.id === openId) ?? null : null),
+    [logs, openId]
+  );
+  const done = current?.done ?? false;
+
   const submitLog = (e: React.FormEvent) => {
-    e.preventDefault(); // 기본 동작 실행 방지
+    e.preventDefault();
     onCreateLog(text);
     setText("");
   };
@@ -52,13 +60,12 @@ export default function DayLogSection({
   // 수정한 내용 저장
   const saveEdit = () => {
     if (!openId) return;
-
     const newText = editText.trim();
     onUpdateLog(openId, {
       text: newText || undefined,
       memo: editMemo.trim() || undefined,
     });
-    closeSheet(); // 자동 닫기
+    closeSheet();
   };
 
   // 일정 삭제
@@ -66,6 +73,12 @@ export default function DayLogSection({
     if (!openId) return;
     onDeleteLog(openId);
     closeSheet();
+  };
+
+  // 완료 토글(즉시 반영: 부모 상태 변경 → logs 업데이트 → 파생 done 갱신)
+  const toggleDoneInSheet = () => {
+    if (!current) return;
+    onToggleDone(current.id);
   };
 
   return (
@@ -98,22 +111,36 @@ export default function DayLogSection({
             const hasMemo =
               typeof log.memo === "string" && log.memo.trim().length > 0;
 
+            const hasDone = log.done === true;
+
             return (
               <li
                 key={log.id}
-                className="w-full p-3 flex justify-between gap-2 bg-gray-100 rounded cursor-pointer"
+                className={`w-full p-3 flex justify-between items-center gap-2 bg-gray-100 rounded cursor-pointer ${
+                  log.done ? "" : "border-r-4 border-blue-300"
+                }`}
                 onClick={() => openSheet(log)}
               >
-                <div>{log.text}</div>
-                <div>
+                <div
+                  className={`truncate 
+                    ${hasDone ? "line-through text-gray-500" : ""}`}
+                >
+                  {log.text}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
                   {hasMemo && (
-                    <span className="bg-pink-400 m-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                    <span className="bg-rose-400 px-1 py-0.5 rounded text-white text-xs font-medium">
                       메모
                     </span>
                   )}
                   {edited && (
-                    <span className="bg-orange-400 mr-1 px-1 py-0.5 rounded text-white text-xs font-medium">
+                    <span className="bg-amber-400 px-1 py-0.5 rounded text-white text-xs font-medium">
                       수정됨
+                    </span>
+                  )}
+                  {hasDone && (
+                    <span className="bg-lime-500 px-1 py-0.5 rounded text-white text-xs font-medium">
+                      완료
                     </span>
                   )}
                 </div>
@@ -124,7 +151,7 @@ export default function DayLogSection({
       </div>
 
       {/* bottom sheet */}
-      {openId && (
+      {openId && current && (
         <>
           {/* overlay */}
           <div className="fixed inset-0 bg-black/30" onClick={closeSheet} />
@@ -138,16 +165,12 @@ export default function DayLogSection({
             <label className="block py-1 text-sm font-medium">일정</label>
             <input
               className="w-full border border-gray-300 rounded p-2 mb-7 text-sm
-              focus:outline-none
-              focus-visible:outline-none
-              focus:ring-0
-              focus-visible:ring-0
-              focus:border-blue-400
-              "
+              focus:outline-none focus:ring-0 focus:border-blue-400"
               value={editText}
               onChange={(e) => setEditText(e.target.value)}
               autoFocus
             />
+
             <label className="block py-1 text-sm font-medium">
               메모{" "}
               <span className="text-xs text-gray-500">
@@ -157,9 +180,7 @@ export default function DayLogSection({
             <textarea
               className="block w-full rounded bg-white mb-7 p-2 text-sm
                ring-1 ring-gray-300
-               focus:outline-none focus:ring-1
-               focus:ring-blue-400
-               focus:border-transparent
+               focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent
                resize-none h-30 appearance-none"
               rows={4}
               placeholder="메모를 적어보세요."
@@ -177,14 +198,22 @@ export default function DayLogSection({
                 삭제
               </button>
               <button
-                className="flex-1 bg-blue-400 text-white p-2 rounded"
+                className="flex-1 bg-amber-400 text-white p-2 rounded disabled:opacity-50"
                 onClick={saveEdit}
                 disabled={!editText.trim()}
               >
-                저장
+                확인
+              </button>
+              <button
+                className={`flex-1 text-white p-2 rounded 
+                  ${done ? "bg-lime-500" : "bg-gray-400"}`}
+                onClick={toggleDoneInSheet}
+              >
+                {done ? "완료" : "미완료"}
               </button>
             </div>
           </div>
+          <style>{`@keyframes slideUp { from { transform: translateY(16px); opacity:.7 } to { transform: translateY(0); opacity:1 } }`}</style>
         </>
       )}
     </section>

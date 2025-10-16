@@ -7,4 +7,5 @@ export type DailyLog = {
   memo?: string;
   createdAt: number;
   updatedAt?: number;
+  done: boolean;
 };
