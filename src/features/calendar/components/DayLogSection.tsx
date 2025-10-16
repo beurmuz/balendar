@@ -179,12 +179,6 @@ export default function DayLogSection({
               onChange={(e) => setEditMemo(e.target.value)}
               maxLength={150}
             />
-            {current?.updatedAt && (
-              <p className="text-xs text-gray-500 mb-4">
-                최근 수정:{" "}
-                {Math.round((Date.now() - current.updatedAt) / 60000)}분 전
-              </p>
-            )}
 
             {/* 버튼 */}
             <div className="flex gap-2">
