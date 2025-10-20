@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useBottomsheet() {
   const [open, setOpen] = useState(false);
 
-  const openSheet = () => setOpen(true);
-  const closeSheet = () => setOpen(false);
+  const openSheet = useCallback(() => setOpen(true), []);
+  const closeSheet = useCallback(() => setOpen(false), []);
 
   // ESC로 sheet 닫기
   useEffect(() => {
