@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import type { DailyLog } from "../types";
 import { isSameDay } from "date-fns";
+import BottomSheet from "../../../shared/ui/BottomSheet";
+import { useBottomsheet } from "../../../shared/hooks/useBottomsheet";
 
 type Props = {
   date: Date;
@@ -26,6 +28,8 @@ export default function DayLogSection({
   const [editText, setEditText] = useState("");
   const [editMemo, setEditMemo] = useState("");
 
+  const sheet = useBottomsheet();
+
   const dateHeader = isSameDay(date, new Date())
     ? "오늘"
     : `${date.getMonth() + 1}월 ${date.getDate()}일`;
@@ -48,6 +52,7 @@ export default function DayLogSection({
     setOpenId(log.id);
     setEditText(log.text);
     setEditMemo(log.memo || "");
+    sheet.openSheet();
   };
 
   // bottom Sheet close
@@ -55,6 +60,7 @@ export default function DayLogSection({
     setOpenId(null);
     setEditText("");
     setEditMemo("");
+    sheet.closeSheet();
   };
 
   // 수정한 내용 저장
@@ -141,20 +147,11 @@ export default function DayLogSection({
       </div>
 
       {/* bottom sheet */}
-      {openId && current && (
-        <>
-          {/* overlay */}
-          <div className="fixed inset-0 bg-black/30" onClick={closeSheet} />
-
-          {/* sheet */}
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed left-0 right-0 bottom-0 bg-white max-h-[70vh] rounded-t-2xl px-4 py-7 animate-[slideUp_160ms_ease-out]"
-          >
-            {/* <label className="block py-1 text-sm font-medium">일정</label> */}
+      <BottomSheet open={sheet.open} onClose={closeSheet}>
+        {openId && current && (
+          <>
+            {/* 일정명 */}
             <input
-              // className="w-full border border-gray-300 rounded p-2 mb-7 text-sm
               className="w-full rounded mb-3 text-xl font-bold
               focus:outline-none focus:ring-1 focus:ring-blue-400"
               value={editText}
@@ -162,10 +159,11 @@ export default function DayLogSection({
               autoFocus
             />
 
+            {/* 메모 */}
             <label className="block py-1 text-sm font-medium">
               메모
-              <span className="text-xs text-gray-500">
-                ({editMemo.length} / {150})
+              <span className="text-xs text-gray-500 ml-1">
+                ({editMemo.length}/{150})
               </span>
             </label>
             <textarea
@@ -203,9 +201,9 @@ export default function DayLogSection({
                 {done ? "완료" : "미완료"}
               </button>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </BottomSheet>
     </section>
   );
 }
