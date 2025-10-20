@@ -204,7 +204,6 @@ export default function DayLogSection({
               </button>
             </div>
           </div>
-          <style>{`@keyframes slideUp { from { transform: translateY(16px); opacity:.7 } to { transform: translateY(0); opacity:1 } }`}</style>
         </>
       )}
     </section>
